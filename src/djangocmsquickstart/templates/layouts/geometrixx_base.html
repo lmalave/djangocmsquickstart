@@ -1,3 +1,4 @@
+{% load cms_tags sekizai_tags %}
 <!DOCTYPE HTML>
 <html >
 <head>
@@ -67,9 +68,11 @@ GraniteClientLibraryManager.write([{"p":"/static/etc/designs/geometrixx/clientli
     <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/static/etc/designs/geometrixx/favicon.ico">
     
     <title>Products</title>
+    	{% render_block "css" %}
 </head>
 
 <body class="page contentpage ">
+      	{% cms_toolbar %}
 <div class="parbase clientcontext"><script type="text/javascript">
 GraniteClientLibraryManager.write([{"p":"/static/etc/clientlibs/foundation/personalization/select2.js","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/select2.css","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/ui.js","c":[]},{"p":"/static/etc/clientlibs/foundation/jquery-ui/themes/default.css","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/ui/themes/default.css","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/ui/ie6/themes/default.css","c":["ie6"]}],false);
 </script>
@@ -86,85 +89,9 @@ GraniteClientLibraryManager.write([{"p":"/static/etc/clientlibs/foundation/perso
 </div>
 
     <div class="bg" id="main_bg">
-        <div class="header">
-    <div class="container_16">
-        <div class="grid_8">
-            <div class="logo"><a href="/static/content/geometrixx/en.html"><img title="" alt="Home" src="/static/etc/designs/geometrixx/_jcr_content/page/logo.img.png/1282235023667.png"></a>
-<!--cq{"decorated":true,"type":"foundation/components/logo","path":"/static/content/geometrixx/en/products/jcr:content/logo","selectors":null,"servlet":"Script /libs/foundation/components/logo/logo.jsp","totalTime":0,"selfTime":0}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/logo" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/logo&quot;,&quot;type&quot;:&quot;foundation/components/logo&quot;,&quot;csp&quot;:&quot;contentpage|page/logo&quot;}"></cq>
-</div>
-
-        </div>
-        <div class="grid_8">
-            <div class="search_area">
-                <div class="userinfo">
-<script type="text/javascript">function logout() {
-    if (_g && _g.shared && _g.shared.ClientSidePersistence) {
-        _g.shared.ClientSidePersistence.clearAllMaps();
-    }
-
-
-    if (CQ_Analytics && CQ_Analytics.CCM) {
-        CQ_Analytics.ProfileDataMgr.loadProfile("anonymous");
-        CQ.shared.Util.reload();
-    }
-
-}</script>
-<nav>
-    <ul>
-        
-        <li class="user cq-cc-profile-not-anonymous">
-            <span id="profile-formattedName-_content_geometrixx_en_products_jcr_content_userinfo"></span><script type="text/javascript">
-if( window.CQ_Analytics ) {CQ_Analytics.ClientContextUtils.renderStoreProperty('profile\x2DformattedName\x2D_content_geometrixx_en_products_jcr_content_userinfo','profile','formattedName','\x28','\x29','');}</script>
-
-        </li>
-        
-        <li class="profilepage cq-cc-profile-not-anonymous">
-            <a id="myprofile-link" href="">My Profile</a><script type="text/javascript">$CQ(function() {if( window.CQ_Analytics && CQ_Analytics.CCM) {CQ_Analytics.ClientContextUtils.onStoreRegistered('profile', function(store) {var renderer = function() {var linkHref = '\x24\x7Bprofile.path\x7D.form.html\x2Fcontent\x2Fgeometrixx\x2Fen\x2Ftoolbar\x2Fprofiles\x2Fview';var linkValue = 'My\x20Profile';var p = store.getData();if (p) {linkHref = linkHref.replace(/\$\{profile\.path\}/g, p['path']);}linkValue = '' + linkValue + '';var link = document.getElementById('myprofile\x2Dlink');if (link && link.href != linkHref) {link.href = '' + linkHref;}if (link && link.innerHTML != linkValue) {link.innerHTML = linkValue;}};renderer();store.addListener('update', function() {renderer();});});}});</script>
-
-        </li>
-        
-        <li class="signout cq-cc-profile-not-anonymous">
-            <a href="javascript:logout();">Sign Out</a>
-        </li>
-        
-        <li class="login cq-cc-profile-anonymous"><a href="/static/content/geometrixx/en/toolbar/account/login.html">Sign In</a></li>
-        
-        <li class="signup cq-cc-profile-anonymous"><a href="/static/content/geometrixx/en/toolbar/account/register.html">Sign Up</a></li>
-        
-    </ul>
-</nav>
-<!--cq{"decorated":true,"type":"foundation/components/userinfo","path":"/static/content/geometrixx/en/products/jcr:content/userinfo","selectors":null,"servlet":"Script /libs/foundation/components/userinfo/userinfo.jsp","totalTime":2,"selfTime":2}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/userinfo" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/userinfo&quot;,&quot;type&quot;:&quot;foundation/components/userinfo&quot;,&quot;csp&quot;:&quot;contentpage|page/userinfo&quot;}"></cq>
-</div>
-
-                <div class="toptoolbar toolbar"><ul><li class="first last">
-                        <a href="/static/content/geometrixx/en/toolbar/contacts.html">Contact</a>
-                    </li></ul>
-<!--cq{"decorated":true,"type":"foundation/components/toolbar","path":"/static/content/geometrixx/en/products/jcr:content/toptoolbar","selectors":null,"servlet":"Script /libs/foundation/components/toolbar/toolbar.jsp","totalTime":1,"selfTime":1}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/toptoolbar" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/toptoolbar&quot;,&quot;type&quot;:&quot;foundation/components/toolbar&quot;,&quot;csp&quot;:&quot;contentpage|page/toptoolbar|toolbar&quot;}"></cq>
-</div>
-
-                <div class="clear"></div>
-                <form action="/static/content/geometrixx/en/toolbar/search.html" method="get">
-                    <fieldset>
-                        <div class="input_box">
-                            <label for="h-search-field" style="display: none;">Enter your search query</label>
-                            <input class="cq-auto-clear" type="text" value="Enter Query" name="q"  id="h-search-field">
-                        </div>
-                        <input type="button" onclick="this.form.submit();" class="btn" >
-                    </fieldset>
-                </form>
-            </div>
-        </div>
-        <script type="text/javascript" src="/static/content/geometrixx/en.topnav.1401974764005.html"></script>
-        
-    </div>
-</div>
-
-        
-
+			{% block header %}{% endblock %}
 <div class="container_16">
+      				{% block main_content %}Main content goes here{% endblock %}
     <div class="grid_16">
         <div class="cq-analyzable breadcrumb"><a href="/static/content/geometrixx/en.html" onclick="CQ_Analytics.record({event:'followBreadcrumb',values: { breadcrumbPath: '/content/geometrixx/en' },collect: false,options: { obj: this },componentPath: 'foundation/components/breadcrumb'})">English</a> » 
 <!--cq{"decorated":true,"type":"foundation/components/breadcrumb","path":"/static/content/geometrixx/en/products/jcr:content/breadcrumb","selectors":null,"servlet":"Script /libs/foundation/components/breadcrumb/breadcrumb.jsp","totalTime":1,"selfTime":1}-->
@@ -449,50 +376,7 @@ GraniteClientLibraryManager.write([{"p":"/static/etc/clientlibs/foundation/swfob
 
         
 
-<div class="footer container_16">
-    <div class="grid_6">
-        <h3>&copy; 2014 Geometrixx Inc.</h3>
-        <div class="toolbar"><ul><li class="first ">
-                        <a href="/static/content/geometrixx/en/toolbar/feedback.html">Feedback</a>
-                    </li><li class="">
-                        <a href="/static/content/geometrixx/en/toolbar/newsletter.html">Newsletter</a>
-                    </li><li class="">
-                        <a href="/static/content/geometrixx/en/toolbar/search.html">Search</a>
-                    </li><li class="">
-                        <a href="/static/content/geometrixx/en/toolbar/sitemap.html">Sitemap</a>
-                    </li><li class="last">
-                        <a href="/static/content/geometrixx/en/toolbar/blog.html">Blog</a>
-                    </li></ul>
-<!--cq{"decorated":true,"type":"foundation/components/toolbar","path":"/static/content/geometrixx/en/products/jcr:content/toolbar","selectors":null,"servlet":"Script /libs/foundation/components/toolbar/toolbar.jsp","totalTime":18,"selfTime":18}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/toolbar" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/toolbar&quot;,&quot;type&quot;:&quot;foundation/components/toolbar&quot;,&quot;csp&quot;:&quot;contentpage|page/toolbar&quot;}"></cq>
-</div>
-
-    </div>
-    <div class="grid_6">
-        <h3>Geometrixx Newsletter</h3>
-        <p>We would like to keep in touch with you. Sign up here to receive our monthly newsletter on the latest products and services from Geometrixx.</p>
-        <div class="form_section">
-            <form action="" method="post">
-                <fieldset>
-                    <div class="input_box1">
-                        <label for="f-newsletter-subscription" style="display: none;">Enter your email address</label>
-                        <input class="cq-auto-clear" type="text" value="Your Email Adress" name="" id="f-newsletter-subscription"/>
-                    </div>
-                    <input type="button" value="" name="" class="sign_up"/>
-                </fieldset>
-            </form>
-        </div>
-    </div>
-    <div class="grid_4">
-        <h3>Follow us</h3>
-        <ul>
-            <li><a href="#"><img class="icon_facebook" src="/static/etc/designs/default/0.gif" alt=""/> Let&rsquo;s get together on Facebook</a></li>
-            <li><a href="#"><img class="icon_twitter" src="/static/etc/designs/default/0.gif" alt=""/> Follow us on Twitter</a></li>
-            <li><a href="/static/content/geometrixx_mobile/en.html"><img class="icon_mobile" src="/static/etc/designs/default/0.gif" alt=""/> We&rsquo;re mobile!</a></li>
-        </ul>
-    </div>
-    <div class="clear"></div>
-</div>
+			{% block footer %}{% endblock %}
 
     </div>
     
@@ -515,6 +399,7 @@ http://chart.apis.google.com/chart?chtt=products.html+%2898ms%29&cht=bhs&chxt=x&
 <!--cq{"decorated":true,"type":"cq/cloudserviceconfigs/components/servicecomponents","path":"/static/content/geometrixx/en/products/jcr:content/cloudservices","selectors":null,"servlet":"Script /libs/cq/cloudserviceconfigs/components/servicecomponents/servicecomponents.jsp","totalTime":1,"selfTime":1}-->
 </div>
 
+    {% render_block "js" %}
 </body>
 
 </html>
