@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 
 class FlashPlugin(CMSPluginBase):
     model = models.FlashPluginModel # Model where data about this plugin is saved
-    name = _("FlashPlugin") # Name of the plugin
+    name = _("Flash") # Name of the plugin
     render_template = "components/geometrixx_flash_plugin.html" # template to render the plugin with
     def render(self, context, instance, placeholder): 
         context.update({'instance':instance})
@@ -19,7 +19,7 @@ class FlashPlugin(CMSPluginBase):
 
 class ProductGridPlugin(CMSPluginBase):
     model = models.ProductGridPluginModel # Model where data about this plugin is saved
-    name = _("TwoColumnProductGridPlugin") # Name of the plugin
+    name = _("Product Grid") # Name of the plugin
     render_template = "components/geometrixx_product_grid_plugin.html" # template to render the plugin with
     def render(self, context, instance, placeholder): 
         context.update({'instance':instance})
@@ -27,7 +27,7 @@ class ProductGridPlugin(CMSPluginBase):
 
 class PromoPlugin(CMSPluginBase):
     model = models.PromoPluginModel # Model where data about this plugin is saved
-    name = _("PromoPlugin") # Name of the plugin
+    name = _("Promo") # Name of the plugin
     render_template = "components/geometrixx_promo.html" # template to render the plugin with
     def render(self, context, instance, placeholder): 
         context.update({'instance':instance})
@@ -35,7 +35,7 @@ class PromoPlugin(CMSPluginBase):
 
 class TwoColumnContainerPlugin(CMSPluginBase):
     model = models.TwoColumnContainerPluginModel # Model where data about this plugin is saved
-    name = _("TwoColumnContainerPlugin") # Name of the plugin
+    name = _("Two Column Container") # Name of the plugin
     render_template = "components/geometrixx_2_column_container.html" # template to render the plugin with
     def render(self, context, instance, placeholder): 
         context.update({'instance':instance})
