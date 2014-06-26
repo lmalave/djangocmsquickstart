@@ -74,19 +74,7 @@ GraniteClientLibraryManager.write([{"p":"/static/etc/designs/geometrixx/clientli
 
 <body class="page contentpage ">
       	{% cms_toolbar %}
-<div class="parbase clientcontext"><script type="text/javascript">
-GraniteClientLibraryManager.write([{"p":"/static/etc/clientlibs/foundation/personalization/select2.js","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/select2.css","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/ui.js","c":[]},{"p":"/static/etc/clientlibs/foundation/jquery-ui/themes/default.css","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/ui/themes/default.css","c":[]},{"p":"/static/etc/clientlibs/foundation/personalization/ui/ie6/themes/default.css","c":["ie6"]}],false);
-</script>
-<script type="text/javascript">
-    $CQ(function() {
-        CQ_Analytics.SegmentMgr.loadSegments("\x2Fetc\x2Fsegmentation\x2Fgeometrixx");
-        CQ_Analytics.ClientContextUtils.init("\x2Fetc\x2Fclientcontext\x2Fdefault", "\x2Fcontent\x2Fgeometrixx\x2Fen\x2Fproducts");
-
-        CQ_Analytics.ClientContextUtils.initUI("\x2Fetc\x2Fclientcontext\x2Fdefault","\x2Fcontent\x2Fgeometrixx\x2Fen\x2Fproducts", false);
-    });
-</script>
-<!--cq{"decorated":true,"type":"cq/personalization/components/clientcontext","path":"/static/content/geometrixx/en/products/jcr:content/clientcontext","selectors":null,"servlet":"Script /libs/cq/personalization/components/clientcontext/clientcontext.jsp","totalTime":1,"selfTime":1}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/clientcontext" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/clientcontext&quot;,&quot;type&quot;:&quot;cq/personalization/components/clientcontext&quot;,&quot;csp&quot;:&quot;contentpage|page/clientcontext|parbase&quot;}"></cq>
+<div class="parbase clientcontext">
 </div>
 
     <div class="bg" id="main_bg">
@@ -94,26 +82,19 @@ GraniteClientLibraryManager.write([{"p":"/static/etc/clientlibs/foundation/perso
 <div class="container_16">
     <div class="grid_16">
         <div class="cq-analyzable breadcrumb">
-        <!--cq{"decorated":true,"type":"foundation/components/breadcrumb","path":"/static/content/geometrixx/en/products/jcr:content/breadcrumb","selectors":null,"servlet":"Script /libs/foundation/components/breadcrumb/breadcrumb.jsp","totalTime":1,"selfTime":1}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/breadcrumb" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/breadcrumb&quot;,&quot;type&quot;:&quot;foundation/components/breadcrumb&quot;,&quot;csp&quot;:&quot;contentpage|page/breadcrumb&quot;}"></cq>
 </div>
 
         <div class="title"><h1>{{ title }}</h1>
-<!--cq{"decorated":true,"type":"geometrixx/components/title","path":"/static/content/geometrixx/en/products/jcr:content/title","selectors":null,"servlet":"Script /apps/geometrixx/components/title/title.jsp","totalTime":0,"selfTime":0}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/title" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/title&quot;,&quot;dialog&quot;:&quot;/apps/geometrixx/components/title/cq:dialog&quot;,&quot;dialogLoadingMode&quot;:&quot;auto&quot;,&quot;dialogLayout&quot;:&quot;auto&quot;,&quot;dialogSrc&quot;:&quot;/apps/geometrixx/components/title/_cq_dialog.html/content/geometrixx/en/products/jcr:content/title&quot;,&quot;type&quot;:&quot;geometrixx/components/title&quot;,&quot;csp&quot;:&quot;contentpage|page/title&quot;,&quot;editConfig&quot;:{&quot;inplaceEditingConfig&quot;:{&quot;active&quot;:true,&quot;editorType&quot;:&quot;title&quot;,&quot;configPath&quot;:&quot;/apps/geometrixx/components/title/cq:editConfig/cq:inplaceEditing/config&quot;}},&quot;ipeConfig&quot;:{&quot;jcr:path&quot;:&quot;/apps/geometrixx/components/title/cq:editConfig/cq:inplaceEditing/config&quot;,&quot;jcr:name&quot;:&quot;config&quot;,&quot;jcr:primaryType&quot;:&quot;nt:unstructured&quot;,&quot;titleTag&quot;:[&quot;h1&quot;,&quot;h2&quot;,&quot;h3&quot;,&quot;p&quot;]}}"></cq>
 </div>
 
     </div>
     <div class="grid_12 body_container">        
       				{% block main_content %}Main content goes here{% endblock %}
-<!--cq{"decorated":true,"type":"foundation/components/parsys","path":"/static/content/geometrixx/en/products/jcr:content/par","selectors":null,"servlet":"Script /libs/foundation/components/parsys/parsys.jsp","totalTime":42,"selfTime":23}-->
-<cq data-path="/static/content/geometrixx/en/products/jcr:content/par" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/par&quot;,&quot;type&quot;:&quot;foundation/components/parsys&quot;,&quot;csp&quot;:&quot;contentpage|page/par|parsys&quot;,&quot;isContainer&quot;:true}"></cq>
 </div>
 
     </div>    
     <div class="grid_4 right_container">
 {% block right_rail_content %}{% endblock %}
-   <!--  promo plugin goes here      --> 
     </div>
 
     <div class="clear"></div>
