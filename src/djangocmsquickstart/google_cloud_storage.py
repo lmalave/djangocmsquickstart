@@ -56,7 +56,7 @@ class GoogleCloudStorage(Storage):
         Returns the SwiftclientStorageFile.
         """
         logger.info("in BlobStorage:_open()")
-        return BlobstoreStorageFile(storage=self)
+        return GoogleCloudStorageFile(storage=self)
 
     def _save(self, name, content):
         logger.info("in BlobStorage:_save(), name: %s" % name)
@@ -156,7 +156,7 @@ class GoogleCloudStorage(Storage):
         return ([], files)
     
 
-class BlobstoreStorageFile(File):
+class GoogleCloudStorageFile(File):
     """
     TODO: do any of these methods need to be changed? 
     """
@@ -166,7 +166,7 @@ class BlobstoreStorageFile(File):
         logger.info("in BlobStorageFile:__init__()")
         self._storage = storage
         self._pos = 0
-        super(BlobstoreStorageFile, self).__init__(file=None, name=name,
+        super(GoogleCloudStorageFile, self).__init__(file=None, name=name,
                                                      *args, **kwargs)
 
     def _get_pos(self):

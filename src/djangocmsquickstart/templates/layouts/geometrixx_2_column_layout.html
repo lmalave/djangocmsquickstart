@@ -104,32 +104,20 @@ GraniteClientLibraryManager.write([{"p":"/static/etc/clientlibs/foundation/perso
 </div>
 
     </div>
-    <div class="grid_12 body_container"> 
-        
+    <div class="grid_12 body_container">        
       				{% block main_content %}Main content goes here{% endblock %}
-
-<!--  flash plugin goes here
-NOTE: removing the Flash hero threw off the layout (promo that was on right went to bottom of page)
- -->
- 
- <!--  2-column container plugin goes here 
- NOTE: removing this threw off the positioning of the promo even more
- -->
-
-   <!--  product grid plugin goes here  --> 
-
 <!--cq{"decorated":true,"type":"foundation/components/parsys","path":"/static/content/geometrixx/en/products/jcr:content/par","selectors":null,"servlet":"Script /libs/foundation/components/parsys/parsys.jsp","totalTime":42,"selfTime":23}-->
 <cq data-path="/static/content/geometrixx/en/products/jcr:content/par" data-config="{&quot;path&quot;:&quot;/content/geometrixx/en/products/jcr:content/par&quot;,&quot;type&quot;:&quot;foundation/components/parsys&quot;,&quot;csp&quot;:&quot;contentpage|page/par|parsys&quot;,&quot;isContainer&quot;:true}"></cq>
 </div>
 
+    </div>    
+    <div class="grid_4 right_container">
+{% block right_rail_content %}{% endblock %}
+   <!--  promo plugin goes here      --> 
     </div>
 
     <div class="clear"></div>
 </div>
-    <div class="grid_4 right_container">
-      				{% block right_rail_content %}Right rail content goes here{% endblock %}
-   <!--  promo plugin goes here      --> 
-    </div>
 			{% block footer %}{% endblock %}
 
     </div>
