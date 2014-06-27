@@ -11,7 +11,6 @@ else:
 
 urlpatterns = [
     # Public pages
-    url(r'^home/', details, {'slug':'home'}, name='pages-root'),
     url(r'^$', details, {'slug':''}, name='pages-root'),
     reg,
 ]

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import itertools
+from cms.utils.conf import get_cms_setting
 from cms.toolbar.toolbar import CMSToolbar
 from sekizai.context import SekizaiContext
 import warnings
@@ -44,7 +45,7 @@ from cms.test_utils.util.context_managers import (SettingsOverride, UserLoginCon
 from cms.test_utils.util.mock import AttributeObject
 from cms.utils.compat.dj import force_unicode
 from cms.utils.placeholder import PlaceholderNoAction, MLNGPlaceholderActions, get_placeholder_conf
-from cms.utils.plugins import get_placeholders
+from cms.utils.plugins import get_placeholders, assign_plugins
 from cms.compat import get_user_model
 from cms.test_utils.project.objectpermissionsapp.models import UserObjectPermission
 
@@ -449,6 +450,44 @@ class PlaceholderTestCase(CMSTestCase, UnittestCompatMixin):
             content_en = render_placeholder(placeholder_en, context_en)
             self.assertRegexpMatches(content_en, "^en body$")
 
+    def test_plugins_discarded_with_language_fallback(self):
+        """
+        Tests side effect of language fallback: if fallback enabled placeholder
+        existed, it discards all other existing plugins
+        """
+        page_en = create_page('page_en', 'col_two.html', 'en')
+        create_title("de", "page_de", page_en)
+        placeholder_sidebar_en = page_en.placeholders.get(slot='col_sidebar')
+        placeholder_en = page_en.placeholders.get(slot='col_left')
+        add_plugin(placeholder_sidebar_en, TextPlugin, 'en', body='en body')
+
+        class NoPushPopContext(Context):
+            def push(self):
+                pass
+
+            pop = push
+
+        context_en = NoPushPopContext()
+        context_en['request'] = self.get_request(language="en", page=page_en)
+
+        conf = {
+            'col_left': {
+                'language_fallback': True,
+            },
+        }
+        with SettingsOverride(CMS_PLACEHOLDER_CONF=conf):
+            # call assign plugins first, as this is what is done in real cms life
+            # for all placeholders in a page at once
+            assign_plugins(context_en['request'],
+                           [placeholder_sidebar_en, placeholder_en], 'col_two.html')
+            # if the normal, non fallback enabled placeholder still has content
+            content_en = render_placeholder(placeholder_sidebar_en, context_en)
+            self.assertRegexpMatches(content_en, "^en body$")
+
+            # remove the cached plugins instances
+            del(placeholder_sidebar_en._plugins_cache)
+            cache.clear()
+
     def test_plugins_prepopulate(self):
         """ Tests prepopulate placeholder configuration """
 
@@ -552,7 +591,7 @@ class PlaceholderTestCase(CMSTestCase, UnittestCompatMixin):
             user = self.get_superuser()
             self.client.login(username=getattr(user, get_user_model().USERNAME_FIELD),
                               password=getattr(user, get_user_model().USERNAME_FIELD))
-            response = self.client.get("/en/?edit")
+            response = self.client.get("/en/?%s" % get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON'))
             for placeholder in page.placeholders.all():
                 self.assertContains(
                     response, "'placeholder_id': '%s'" % placeholder.pk)

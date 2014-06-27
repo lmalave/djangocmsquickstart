@@ -667,6 +667,28 @@ class AdminTests(AdminTestsBase):
             response = self.admin_class.publish_page(request, Page.objects.all()[0].pk, "en")
             self.assertEqual(response.status_code, 403)
 
+    def test_revert_page(self):
+        self.page.publish('en')
+        title = self.page.title_set.get(language='en')
+        title.title = 'new'
+        title.save()
+        self.assertEqual(Title.objects.all().count(), 2)
+        self.assertEqual(Page.objects.all().count(), 2)
+        with self.login_user_context(self.get_superuser()):
+            request = self.get_request()
+            request.method = "POST"
+            response = self.admin_class.revert_page(request, Page.objects.all()[0].pk, "en")
+            self.assertEqual(response.status_code, 302)
+        self.assertEqual(Title.objects.all().count(), 2)
+        self.assertEqual(Page.objects.all().count(), 2)
+        new_title = Title.objects.get(pk=title.pk)
+        self.assertNotEqual(title.title, new_title.title)
+        self.assertTrue(title.publisher_is_draft)
+        self.assertTrue(new_title.publisher_is_draft)
+
+
+
+
     def test_revert_page_requires_perms(self):
         permless = self.get_permless()
         with self.login_user_context(permless):
@@ -682,7 +704,7 @@ class AdminTests(AdminTestsBase):
             response = self.client.get(reverse('admin:cms_page_revert_page', args=(self.page.pk, 'en')))
             self.assertEqual(response.status_code, 302)
             url = response['Location']
-            self.assertTrue(url.endswith('?edit_off'))
+            self.assertTrue(url.endswith('?%s' % get_cms_setting('CMS_TOOLBAR_URL__EDIT_OFF')))
 
     def test_remove_plugin_requires_post(self):
         ph = Placeholder.objects.create(slot='test')
@@ -767,11 +789,11 @@ class AdminTests(AdminTestsBase):
             request = self.get_request('/?public=true')
             response = self.admin_class.preview_page(request, page.pk, 'en')
             self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['Location'], '%s?edit&language=en' % base_url)
+            self.assertEqual(response['Location'], '%s?%s&language=en' % (base_url, get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON')))
             request = self.get_request()
             response = self.admin_class.preview_page(request, page.pk, 'en')
             self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['Location'], '%s?edit&language=en' % base_url)
+            self.assertEqual(response['Location'], '%s?%s&language=en' % (base_url, get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON')))
             current_site = Site.objects.create(domain='django-cms.org', name='django-cms')
             page.site = current_site
             page.save()
@@ -780,7 +802,7 @@ class AdminTests(AdminTestsBase):
             response = self.admin_class.preview_page(request, page.pk, 'en')
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response['Location'],
-                             'http://django-cms.org%s?edit&language=en' % base_url)
+                             'http://django-cms.org%s?%s&language=en' % (base_url, get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON')))
 
     def test_too_many_plugins_global(self):
         conf = {
@@ -1360,18 +1382,18 @@ class AdminFormsTests(AdminTestsBase):
         self.assertEqual(Placeholder.objects.all().count(), 4)
         with self.login_user_context(user):
             with self.assertNumQueries(FuzzyInt(40, 66)):
-                output = force_unicode(self.client.get('/en/?edit').content)
+                output = force_unicode(self.client.get('/en/?%s' % get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON')).content)
             self.assertIn('<b>Test</b>', output)
             self.assertEqual(Placeholder.objects.all().count(), 9)
             self.assertEqual(StaticPlaceholder.objects.count(), 2)
             for placeholder in Placeholder.objects.all():
                 add_plugin(placeholder, TextPlugin, 'en', body='<b>Test</b>')
             with self.assertNumQueries(FuzzyInt(40, 60)):
-                output = force_unicode(self.client.get('/en/?edit').content)
+                output = force_unicode(self.client.get('/en/?%s' % get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON')).content)
             self.assertIn('<b>Test</b>', output)
         with self.assertNumQueries(FuzzyInt(18, 34)):
-            force_unicode(self.client.get('/en/?edit').content)
-        with self.assertNumQueries(FuzzyInt(13, 15)):
+            force_unicode(self.client.get('/en/?%s' % get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON')).content)
+        with self.assertNumQueries(FuzzyInt(12, 14)):
             force_unicode(self.client.get('/en/').content)
 
     def test_tree_view_queries(self):

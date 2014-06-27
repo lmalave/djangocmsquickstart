@@ -96,7 +96,7 @@ class PageForm(forms.ModelForm):
             self.fields['language'].initial = get_language()
         if 'page_type' in self.fields:
             try:
-                type_root = Page.objects.get(publisher_is_draft=True, reverse_id=PAGE_TYPES_ID)
+                type_root = Page.objects.get(publisher_is_draft=True, reverse_id=PAGE_TYPES_ID, site=site_id)
             except Page.DoesNotExist:
                 type_root = None
             if type_root:
@@ -208,10 +208,22 @@ class AdvancedSettingsForm(forms.ModelForm):
     )
 
     redirect = PageSmartLinkField(label=_('Redirect'), required=False,
-                               help_text=_('Redirects to this URL.'), placeholder_text=_('Start typing...'))
+                    help_text=_('Redirects to this URL.'), placeholder_text=_('Start typing...'),
+                    ajax_view='admin:cms_page_get_published_pagelist'
+    )
 
     language = forms.ChoiceField(label=_("Language"), choices=get_language_tuple(),
                                  help_text=_('The current language of the content fields.'))
+
+    fieldsets = (
+        (None, {
+            'fields': ('overwrite_url','redirect'),
+        }),
+        ('Language independent options', {
+            'fields': ('site', 'template', 'reverse_id', 'soft_root', 'navigation_extenders',
+            'application_urls', 'application_namespace', "xframe_options",)
+        })
+    )
 
     def __init__(self, *args, **kwargs):
         super(AdvancedSettingsForm, self).__init__(*args, **kwargs)
@@ -230,10 +242,10 @@ class AdvancedSettingsForm(forms.ModelForm):
             # Prepare a dict mapping the apps by class name ('PollApp') to
             # their app_name attribute ('polls'), if any.
             app_namespaces = {}
-            for app_class in apphook_pool.apps.keys():
-                app = apphook_pool.apps[app_class]
+            for hook in apphook_pool.get_apphooks():
+                app = apphook_pool.get_apphook(hook[0])
                 if app.app_name:
-                    app_namespaces[app_class] = app.app_name
+                    app_namespaces[hook[0]] = app.app_name
 
             self.fields['application_urls'].widget = AppHookSelect(
                 attrs={'id':'application_urls'},
@@ -259,10 +271,9 @@ class AdvancedSettingsForm(forms.ModelForm):
         # 'instance_namespace'.
         instance_namespace = cleaned_data.get('application_namespace', None)
         if apphook:
-            apphook_pool.discover_apps()
             # The attribute on the apps 'app_name' is a misnomer, it should be
             # 'application_namespace'.
-            application_namespace = apphook_pool.apps[apphook].app_name
+            application_namespace = apphook_pool.get_apphook(apphook).app_name
             if application_namespace and not instance_namespace:
                 if Page.objects.filter(
                     publisher_is_draft=True,

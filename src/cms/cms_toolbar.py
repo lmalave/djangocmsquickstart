@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
+try:
+    from urllib import urlencode
+except ImportError:
+    from urllib.parse import urlencode
+
 from django.conf import settings
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.core.urlresolvers import reverse, NoReverseMatch, resolve, Resolver404
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from django.contrib.auth.models import AnonymousUser
@@ -15,6 +20,7 @@ from cms.models import Title, Page
 from cms.toolbar.items import TemplateItem
 from cms.toolbar_base import CMSToolbar
 from cms.toolbar_pool import toolbar_pool
+from cms.utils.compat import DJANGO_1_4
 from cms.utils.i18n import get_language_objects
 from cms.utils.i18n import force_language
 from cms.utils.i18n import get_language_object
@@ -76,9 +82,9 @@ class PlaceholderToolbar(CMSToolbar):
     def add_structure_mode(self):
         switcher = self.toolbar.add_button_list('Mode Switcher', side=self.toolbar.RIGHT,
                                                 extra_classes=['cms_toolbar-item-cms-mode-switcher'])
-        switcher.add_button(_("Structure"), '?build', active=self.toolbar.build_mode,
+        switcher.add_button(_("Structure"), '?%s' % get_cms_setting('CMS_TOOLBAR_URL__BUILD'), active=self.toolbar.build_mode,
                             disabled=not self.toolbar.build_mode)
-        switcher.add_button(_("Content"), '?edit', active=not self.toolbar.build_mode,
+        switcher.add_button(_("Content"), '?%s' % get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON'), active=not self.toolbar.build_mode,
                             disabled=self.toolbar.build_mode)
 
 
@@ -131,14 +137,41 @@ class BasicToolbar(CMSToolbar):
         else:
             page = None
         redirect_url = '/'
+
+        #
+        # We'll show "Logout Joe Bloggs" if the name fields in auth.User are
+        # completed, else "Logout jbloggs". If anything goes wrong, it'll just
+        # be "Logout".
+        #
+        try:
+            if self.request.user.get_full_name():
+                user_name = self.request.user.get_full_name()
+            else:
+                if DJANGO_1_4:
+                    user_name = self.request.user.username
+                else:
+                    user_name = self.request.user.get_username()
+        except:
+            user_name = ''
+
+        if user_name:
+            logout_menu_text = _('Logout %s') % user_name
+        else:
+            logout_menu_text = _('Logout')
+
         if (page and
             (not page.is_published(self.current_lang) or page.login_required
                 or not page.has_view_permission(self.request, AnonymousUser()))):
-            admin_menu.add_ajax_item(_('Logout'), action=reverse('admin:logout'),
-                                     active=True, on_success=redirect_url)
+            on_success=redirect_url
         else:
-            admin_menu.add_ajax_item(_('Logout'), action=reverse('admin:logout'),
-                                     active=True)
+            on_success=self.toolbar.REFRESH_PAGE
+
+        admin_menu.add_ajax_item(
+            logout_menu_text,
+            action=reverse('admin:logout'),
+            active=True,
+            on_success=on_success
+        )
 
     def add_language_menu(self):
         language_menu = self.toolbar.get_or_create_menu(LANGUAGE_MENU_IDENTIFIER, _('Language'))
@@ -211,8 +244,20 @@ class PageToolbar(CMSToolbar):
                     pk = self.page.pk
                 with force_language(self.current_lang):
                     publish_url = reverse('admin:cms_page_publish_page', args=(pk, self.current_lang))
+                publish_url_args = {}
                 if dirty_statics:
-                    publish_url += "?statics=%s" % ','.join(str(static.pk) for static in dirty_statics)
+                    publish_url_args['statics'] = ','.join(str(static.pk) for static in dirty_statics)
+                # detect if we are in an apphook
+                with(force_language(self.toolbar.language)):
+                    try:
+                        resolver = resolve(self.request.path)
+                        from cms.views import details
+                        if resolver.func != details:
+                            publish_url_args['redirect'] = self.request.path
+                    except Resolver404:
+                        pass
+                if publish_url_args:
+                    publish_url = "%s?%s" % (publish_url, urlencode(publish_url_args))
                 if publish_permission:
                     self.toolbar.add_button(title, url=publish_url, extra_classes=classes, side=self.toolbar.RIGHT,
                                             disabled=not dirty)
@@ -289,7 +334,7 @@ class PageToolbar(CMSToolbar):
                 question = _('Are you sure you want copy all plugins from %s?') % language['name']
                 language_menu.add_ajax_item(_("Copy all plugins from %s") % language['name'], action=url,
                                             data={'source_language': language['code'],
-                                                'target_language': self.current_lang}, question=question)
+                                                'target_language': self.current_lang}, question=question, on_success=self.toolbar.REFRESH_PAGE)
 
     def change_admin_menu(self):
         admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER)
@@ -330,7 +375,7 @@ class PageToolbar(CMSToolbar):
             )
         )
         current_page_menu.add_break(PAGE_MENU_FIRST_BREAK)
-        current_page_menu.add_link_item(_('Edit this Page'), disabled=self.toolbar.edit_mode, url='?edit')
+        current_page_menu.add_link_item(_('Edit this Page'), disabled=self.toolbar.edit_mode, url='?%s' % get_cms_setting('CMS_TOOLBAR_URL__EDIT_ON'))
         page_info_url = "%s?language=%s" % (
             reverse('admin:cms_page_change', args=(self.page.pk,)),
             self.toolbar.language
@@ -346,7 +391,7 @@ class PageToolbar(CMSToolbar):
                 if path == TEMPLATE_INHERITANCE_MAGIC:
                     templates_menu.add_break(TEMPLATE_MENU_BREAK)
                 templates_menu.add_ajax_item(name, action=action, data={'template': path}, active=active,
-                                             on_success='REFRESH_PAGE')
+                                             on_success=self.toolbar.REFRESH_PAGE)
         current_page_menu.add_break(PAGE_MENU_SECOND_BREAK)
 
         # advanced settings
@@ -374,7 +419,7 @@ class PageToolbar(CMSToolbar):
         else:
             nav_title = _("Display in navigation")
         nav_action = reverse('admin:cms_page_change_innavigation', args=(self.page.pk,))
-        current_page_menu.add_ajax_item(nav_title, action=nav_action, disabled=not_edit_mode)
+        current_page_menu.add_ajax_item(nav_title, action=nav_action, disabled=not_edit_mode, on_success=self.toolbar.REFRESH_PAGE)
         if self.title:
             # publisher
             if self.title.published:
@@ -384,7 +429,7 @@ class PageToolbar(CMSToolbar):
                 publish_title = _('Publish page')
                 publish_url = reverse('admin:cms_page_publish_page', args=(self.page.pk, self.current_lang))
 
-            current_page_menu.add_ajax_item(publish_title, action=publish_url, disabled=not_edit_mode)
+            current_page_menu.add_ajax_item(publish_title, action=publish_url, disabled=not_edit_mode, on_success=self.toolbar.REFRESH_PAGE)
         current_page_menu.add_break(PAGE_MENU_FOURTH_BREAK)
         # delete
         delete_url = reverse('admin:cms_page_delete', args=(self.page.pk,))
@@ -432,11 +477,11 @@ class PageToolbar(CMSToolbar):
                 has_undo = versions.count() > 1
             undo_action = reverse('admin:cms_page_undo', args=(self.page.pk,))
             redo_action = reverse('admin:cms_page_redo', args=(self.page.pk,))
-            history_menu.add_ajax_item(_('Undo'), action=undo_action, disabled=not has_undo)
-            history_menu.add_ajax_item(_('Redo'), action=redo_action, disabled=not has_redo)
+            history_menu.add_ajax_item(_('Undo'), action=undo_action, disabled=not has_undo, on_success=self.toolbar.REFRESH_PAGE)
+            history_menu.add_ajax_item(_('Redo'), action=redo_action, disabled=not has_redo, on_success=self.toolbar.REFRESH_PAGE)
             history_menu.add_break(HISTORY_MENU_BREAK)
         revert_action = reverse('admin:cms_page_revert_page', args=(self.page.pk, self.current_lang))
         revert_question = _('Are you sure you want to revert to live?')
         history_menu.add_ajax_item(_('Revert to live'), action=revert_action, question=revert_question,
-                                   disabled=not self.page.is_dirty(self.current_lang))
+                                   disabled=not self.page.is_dirty(self.current_lang), on_success=self.toolbar.REFRESH_PAGE)
         history_menu.add_modal_item(_('View history'), url=reverse('admin:cms_page_history', args=(self.page.pk,)))
