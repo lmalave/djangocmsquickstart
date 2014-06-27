@@ -17,6 +17,14 @@ class FlashPlugin(CMSPluginBase):
         context.update({'instance':instance})
         return context
 
+class ProductFeaturePlugin(CMSPluginBase):
+    model = models.ProductFeaturePluginModel # Model where data about this plugin is saved
+    name = _("Product Feature") # Name of the plugin
+    render_template = "components/geometrixx_product_feature.html" # template to render the plugin with
+    def render(self, context, instance, placeholder): 
+        context.update({'instance':instance})
+        return context
+
 class ProductGridPlugin(CMSPluginBase):
     model = models.ProductGridPluginModel # Model where data about this plugin is saved
     name = _("Product Grid") # Name of the plugin
@@ -37,11 +45,13 @@ class TwoColumnContainerPlugin(CMSPluginBase):
     model = models.TwoColumnContainerPluginModel # Model where data about this plugin is saved
     name = _("Two Column Container") # Name of the plugin
     render_template = "components/geometrixx_2_column_container.html" # template to render the plugin with
+    allow_children = True  # This enables the parent plugin to accept child plugins
     def render(self, context, instance, placeholder): 
         context.update({'instance':instance})
         return context
 
 plugin_pool.register_plugin(FlashPlugin) # register the plugin
+plugin_pool.register_plugin(ProductFeaturePlugin) # register the plugin
 plugin_pool.register_plugin(ProductGridPlugin) # register the plugin
 plugin_pool.register_plugin(PromoPlugin) # register the plugin
 plugin_pool.register_plugin(TwoColumnContainerPlugin) # register the plugin

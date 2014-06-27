@@ -24,6 +24,10 @@ class FlashPluginModel(CMSPlugin):
     def __unicode__(self): 
         return 'FlashPluginModel:'+str(self.pk)
 
+class ProductFeaturePluginModel(CMSPlugin):
+    def __unicode__(self): 
+        return 'ProductFeaturePluginModel:'+str(self.pk)
+
 class ProductGridPluginModel(CMSPlugin):
     def __unicode__(self): 
         return 'ProductGridPluginModel:'+str(self.pk)

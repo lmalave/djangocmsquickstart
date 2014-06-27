@@ -1,10 +1,11 @@
 {% load cms_tags %}
-    {% for plugin in instance.child_plugin_instances %}
-        {% render_plugin plugin %}
-    {% endfor %}
 <div class="title section"><h2>Our Bestsellers</h2>
 </div>
 <div class="parsys_column cq-colctrl-lt0">
+    {% for plugin in instance.child_plugin_instances %}
+        {% render_plugin plugin %}
+    {% endfor %}
+	<!--  
 	<div class="parsys_column cq-colctrl-lt0-c0">
 		<div class="title section"><a href="/static/content/geometrixx/en/products/triangle.html"><h3>Triangle</h3></a>
 		</div>
@@ -17,7 +18,7 @@
  
 		</div>
 	</div>
-	<div class="parsys_column cq-colctrl-lt0-c1">
+	<div class="parsys_column cq-colctrl-lt0-c0">
 		<div class="title section"><a href="/static/content/geometrixx/en/products/square.html"><h3>Square</h3></a>
 		</div>
 		<div class="parbase image cq-analyzable section"><div id="cq-image-jsp-&#x2f;content&#x2f;geometrixx&#x2f;en&#x2f;products&#x2f;jcr&#x3a;content&#x2f;par&#x2f;image_0"><img title="Square Packshot" alt="Square Packshot" class="cq-dd-image" src="/static/content/geometrixx/en/products/_jcr_content/par/image_0.img.jpg/1310039379559.jpg"></div>
@@ -37,6 +38,7 @@
 	
 		</div>
 	</div>
+	-->
 </div>
 <div style="clear:both"></div>
 <!-- NOTE: the below commented HTML represents one 2-column row
