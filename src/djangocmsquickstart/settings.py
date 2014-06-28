@@ -198,10 +198,7 @@ LOGGING = {
 }
 
 CMS_TEMPLATES = (
-    ('template_1.html', 'Template One'),
-    ('template_2.html', 'Template Two'),
     ('section_landing.html', 'Section Landing'),
-    ('test_template.html', 'Test Template'),
 )
 
 LANGUAGES = [
