@@ -8,7 +8,7 @@ admin.autodiscover()
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + patterns('',
     # Examples:
-    url(r'^dataadmin/', 'djangocmsquickstart.views.dataadmin', name='dataadmin'),
+    url(r'^view_memcache_keys/', 'djangocmsquickstart.views.view_memcache_keys', name='view_memcache_keys'),
     # url(r'^tripweddings/', include('tripweddings.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

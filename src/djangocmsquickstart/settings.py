@@ -124,6 +124,8 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',  
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'djangocmsquickstart.urls'
@@ -205,3 +207,9 @@ LANGUAGES = [
     ('en', 'English'),
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'gae_backends.memcache.MemcacheCache',
+    }
+}
+CACHE_MIDDLEWARE_SECONDS = 600
