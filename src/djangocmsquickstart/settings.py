@@ -207,9 +207,18 @@ LANGUAGES = [
     ('en', 'English'),
 ]
 
+DEFAULT_FILE_STORAGE = 'gaekit.storages.CloudStorage'
+GS_BUCKET_NAME = 'djangocmsquickstart'
+    
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'gae_backends.memcache.MemcacheCache',
+#    }
+#}
 CACHES = {
     'default': {
-        'BACKEND': 'gae_backends.memcache.MemcacheCache',
+        'BACKEND': 'gaekit.caches.GAEMemcachedCache',
+        'TIMEOUT': 600,
     }
 }
 CACHE_MIDDLEWARE_SECONDS = 600
