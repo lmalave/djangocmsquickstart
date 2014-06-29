@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 class GoogleCloudStorage(Storage):
     """
-    Custom storage for Google Cloud Storage
+    Custom storage for Google Blobstore
     """
     default_quick_listdir = True
     connection_kwargs = {}
@@ -34,7 +34,7 @@ class GoogleCloudStorage(Storage):
 
     def __getstate__(self):
         """
-        Return a picklable representation of the storage.  
+        Return a representation of the storage.  
         TODO: does anything need to be implemented here?
         """
         return {
@@ -45,21 +45,18 @@ class GoogleCloudStorage(Storage):
         """
         Helper function to retrieve the requested Object.
         """
-        logger.info("in BlobStorage:_get_object()")
+        logger.info("in GoogleCloudStorage:_get_object()")
         if name not in self.container.get_object_names():
             return False
         else:
             return self.container.get_object(name)
 
     def _open(self, name, mode="rb"):
-        """
-        Returns the SwiftclientStorageFile.
-        """
-        logger.info("in BlobStorage:_open()")
-        return GoogleCloudStorageFile(storage=self)
+         logger.info("in GoogleCloudStorage:_open()")
+         return GoogleCloudStorageFile(storage=self)
 
     def _save(self, name, content):
-        logger.info("in BlobStorage:_save(), name: %s" % name)
+        logger.info("in GoogleCloudStorage:_save(), name: %s" % name)
 
         write_retry_params = gcs.RetryParams(backoff_factor=1.1)
         # Checks if the content_type is already set.
@@ -76,12 +73,12 @@ class GoogleCloudStorage(Storage):
                         options={'x-goog-meta-foo': 'foo',
                                  'x-goog-meta-bar': 'bar'},
                         retry_params=write_retry_params)
-        logger.info("in BlobStorage:_save(), opened file")
+        logger.info("in GoogleCloudStorage:_save(), opened file")
         gcs_file.write(content.read())
-        logger.info("in BlobStorage:_save(), wrote to file")
+        logger.info("in GoogleCloudStorage:_save(), wrote to file")
         gcs_file.close()
         file_stat = gcs.stat(name)
-        logger.info("in BlobStorage:_save(), got stat: %s" % repr(file_stat))
+        logger.info("in GoogleCloudStorage:_save(), got stat: %s" % repr(file_stat))
         return name
 
     def delete(self, name):
@@ -103,7 +100,7 @@ class GoogleCloudStorage(Storage):
         available for a new file.
         
         """
-        logger.info("in BlobStorage:exists()")
+        logger.info("in GoogleCloudStorage:exists()")
         try:
             exist_retry_params = gcs.RetryParams(backoff_factor=1.1)
             file_stat = gcs.stat(name,retry_params=exist_retry_params)
@@ -116,7 +113,7 @@ class GoogleCloudStorage(Storage):
         """
         Returns the total size, in bytes, of the file specified by name.
         """
-        logger.info("in BlobStorage:size()")
+        logger.info("in GoogleCloudStorage:size()")
         size_retry_params = gcs.RetryParams(backoff_factor=1.1)
         file_stat = gcs.stat(name,retry_params=size_retry_params)
         return file_stat.st_size
@@ -129,16 +126,16 @@ class GoogleCloudStorage(Storage):
         NOTE: done?  Seems to be getting URL using blobstore and images API (trick to get file served directly from GCS instead of through app)
         TODO: handle both image types and non-image types
         """
-        logger.info("in BlobStorage:url()")
+        logger.info("in GoogleCloudStorage:url()")
         # Blobstore API requires extra /gs to distinguish against blobstore files.
         blobstore_filename = '/gs' + name
         # This blob_key works with blobstore APIs that do not expect a
         # corresponding BlobInfo in datastore.
         blob_key = blobstore.create_gs_key(blobstore_filename)     
-        logger.info("in BlobStorage:url(), blob_key: %s" % blob_key)
+        logger.info("in GoogleCloudStorage:url(), blob_key: %s" % blob_key)
         blob_url = images.get_serving_url(blob_key)    
-        logger.info("in BlobStorage:url(), about to print blob_url")
-        logger.info("in BlobStorage:url(), blob_url: %s" % blob_url)
+        logger.info("in GoogleCloudStorage:url(), about to print blob_url")
+        logger.info("in GoogleCloudStorage:url(), blob_url: %s" % blob_url)
         return blob_url
 
     def listdir(self, path):
@@ -151,7 +148,7 @@ class GoogleCloudStorage(Storage):
         
         TODO: does anything need to be implemented here? 
         """
-        logger.info("in BlobStorage:listdir()")
+        logger.info("in GoogleCloudStorage:listdir()")
         files = []
         return ([], files)
     
@@ -163,37 +160,37 @@ class GoogleCloudStorageFile(File):
     closed = False
 
     def __init__(self, storage, name, *args, **kwargs):
-        logger.info("in BlobStorageFile:__init__()")
+        logger.info("in GoogleCloudStorageFile:__init__()")
         self._storage = storage
         self._pos = 0
         super(GoogleCloudStorageFile, self).__init__(file=None, name=name,
                                                      *args, **kwargs)
 
     def _get_pos(self):
-        logger.info("in BlobStorageFile:_get_pos()")
+        logger.info("in GoogleCloudStorageFile:_get_pos()")
         return self._pos
 
     def _get_size(self):
-        logger.info("in BlobStorageFile:_get_size()")
+        logger.info("in GoogleCloudStorageFile:_get_size()")
         if not hasattr(self, "_size"):
             self._size = self._storage.size(self.name)
         return self._size
 
     def _set_size(self, size):
-        logger.info("in BlobStorageFile:_set_size()")
+        logger.info("in GoogleCloudStorageFile:_set_size()")
         self._size = size
 
     size = property(_get_size, _set_size)
 
     def _get_file(self):
-        logger.info("in BlobStorageFile:_get_file()")
+        logger.info("in GoogleCloudStorageFile:_get_file()")
         if not hasattr(self, "_file"):
             self._file = self._storage._get_object(self.name)
             self._file.tell = self._get_pos
         return self._file
 
     def _set_file(self, value):
-        logger.info("in BlobStorageFile:_set_file()")
+        logger.info("in GoogleCloudStorageFile:_set_file()")
         if value is None:
             if hasattr(self, "_file"):
                 del self._file
@@ -209,7 +206,7 @@ class GoogleCloudStorageFile(File):
         If reading the whole file and the content-encoding is gzip, also 
         gunzip the read content.
         """
-        logger.info("in BlobStorageFile:read()")
+        logger.info("in GoogleCloudStorageFile:read()")
         if self._pos == self._get_size() or chunk_size == 0:
             return ""
 
@@ -224,7 +221,7 @@ class GoogleCloudStorageFile(File):
         """
         Returns an iterator of file where each chunk has chunk_size.
         """
-        logger.info("in BlobStorageFile:chunks()")
+        logger.info("in GoogleCloudStorageFile:chunks()")
         if not chunk_size:
             chunk_size = self.DEFAULT_CHUNK_SIZE
         return self.file.get(chunk_size=chunk_size)
@@ -233,20 +230,20 @@ class GoogleCloudStorageFile(File):
         """
         Opens the cloud file object.
         """
-        logger.info("in BlobStorageFile:open()")
+        logger.info("in GoogleCloudStorageFile:open()")
         self._pos = 0
 
     def close(self, *args, **kwargs):
-        logger.info("in BlobStorageFile:close()")
+        logger.info("in GoogleCloudStorageFile:close()")
         self._pos = 0
 
     @property
     def closed(self):
-        logger.info("in BlobStorageFile:closed()")
+        logger.info("in GoogleCloudStorageFile:closed()")
         return not hasattr(self, "_file")
 
     def seek(self, pos):
-        logger.info("in BlobStorageFile:seek()")
+        logger.info("in GoogleCloudStorageFile:seek()")
         self._pos = pos
 
 

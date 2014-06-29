@@ -4,15 +4,17 @@ Created on Jun 24, 2014
 @author: lmalave
 '''
 from django.db import models
+from djangocmsquickstart.storage import GoogleCloudStorage
 from cms.models import CMSPlugin
 from google.appengine.ext import blobstore
 from google.appengine.api import images
 from cms.models import fields
 
-image_path = '/images'
+file_storage = GoogleCloudStorage()
+image_path = '/djangocmsquickstart'
 
 class FlashPluginModel(CMSPlugin):
-    flash_file = models.FileField(upload_to=image_path,null=True,default=None)
+    flash_file = models.FileField(storage=file_storage,upload_to=image_path,null=True,default=None)
     def file_url(self): 
         return images.get_serving_url(blobstore.create_gs_key('/gs'+self.flash_file.name))
     def __unicode__(self): 
@@ -21,9 +23,7 @@ class FlashPluginModel(CMSPlugin):
 class Product(models.Model):
     name = models.CharField(max_length=200,default=None)
     description = models.TextField(max_length=1000,default=None)
-    image = models.FileField(upload_to=image_path,null=True,default=None)
-    def image_url(self): 
-        return images.get_serving_url(blobstore.create_gs_key('/gs'+self.image.name))
+    image = models.FileField(storage=file_storage,upload_to=image_path,null=True,default=None)
     def __unicode__(self): 
         return self.name
 
@@ -40,7 +40,7 @@ class ProductGridPluginModel(CMSPlugin):
 class PromoPluginModel(CMSPlugin):
     heading = models.CharField(max_length=200,null=True,default=None)
     description = models.TextField(max_length=1000,null=True,default=None)
-    image = models.FileField(upload_to=image_path,null=True,default=None)
+    image = models.FileField(storage=file_storage,upload_to=image_path,null=True,default=None)
     def __unicode__(self): 
         return 'heading:'+self.heading[0:5]
 
