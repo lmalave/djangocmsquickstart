@@ -206,9 +206,6 @@ CMS_TEMPLATES = (
 LANGUAGES = [
     ('en', 'English'),
 ]
-
-DEFAULT_FILE_STORAGE = 'gaekit.storages.CloudStorage'
-GS_BUCKET_NAME = 'djangocmsquickstart'
     
 #CACHES = {
 #    'default': {
@@ -218,7 +215,7 @@ GS_BUCKET_NAME = 'djangocmsquickstart'
 CACHES = {
     'default': {
         'BACKEND': 'gaekit.caches.GAEMemcachedCache',
-        'TIMEOUT': 600,
+        'TIMEOUT': 60,
     }
 }
-CACHE_MIDDLEWARE_SECONDS = 600
+CACHE_MIDDLEWARE_SECONDS = 60
