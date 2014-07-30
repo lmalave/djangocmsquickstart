@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from google.appengine.api import images
 from google.appengine.ext import blobstore
-import cloudstorage as gcs
+import cloudstorage as cloudstorage
 
 # import the logging library
 import logging
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 class GoogleCloudStorage(Storage):
     """
-    Custom storage for Google Blobstore
+    Custom storage for Google Cloud Storage
     """
     default_quick_listdir = True
     connection_kwargs = {}
@@ -58,7 +58,7 @@ class GoogleCloudStorage(Storage):
     def _save(self, name, content):
         logger.info("in GoogleCloudStorage:_save(), name: %s" % name)
 
-        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+        write_retry_params = cloudstorage.RetryParams(backoff_factor=1.1)
         # Checks if the content_type is already set.
         # Otherwise uses the mimetypes library to guess.
         if hasattr(content.file, "content_type"):
@@ -67,17 +67,17 @@ class GoogleCloudStorage(Storage):
             mime_type = mimetypes.guess_type(name)
             file_content_type = mime_type
             
-        gcs_file = gcs.open(name, 
+        cloudstorage_file = cloudstorage.open(name, 
                         'w',
                         content_type=file_content_type,
                         options={'x-goog-meta-foo': 'foo',
                                  'x-goog-meta-bar': 'bar'},
                         retry_params=write_retry_params)
         logger.info("in GoogleCloudStorage:_save(), opened file")
-        gcs_file.write(content.read())
+        cloudstorage_file.write(content.read())
         logger.info("in GoogleCloudStorage:_save(), wrote to file")
-        gcs_file.close()
-        file_stat = gcs.stat(name)
+        cloudstorage_file.close()
+        file_stat = cloudstorage.stat(name)
         logger.info("in GoogleCloudStorage:_save(), got stat: %s" % repr(file_stat))
         return name
 
@@ -89,8 +89,8 @@ class GoogleCloudStorage(Storage):
         
         TODO: need to implement and test this
         """
-        delete_retry_params = gcs.RetryParams(backoff_factor=1.1)
-        gcs.delete(name,retry_params=delete_retry_params)
+        delete_retry_params = cloudstorage.RetryParams(backoff_factor=1.1)
+        cloudstorage.delete(name,retry_params=delete_retry_params)
         logger.info("in BlobStorage:delete()")
 
     def exists(self, name):
@@ -102,10 +102,10 @@ class GoogleCloudStorage(Storage):
         """
         logger.info("in GoogleCloudStorage:exists()")
         try:
-            exist_retry_params = gcs.RetryParams(backoff_factor=1.1)
-            file_stat = gcs.stat(name,retry_params=exist_retry_params)
+            exist_retry_params = cloudstorage.RetryParams(backoff_factor=1.1)
+            file_stat = cloudstorage.stat(name,retry_params=exist_retry_params)
             return True
-        except gcs.errors.NotFoundError:
+        except cloudstorage.errors.NotFoundError:
             return False
         return False
 
@@ -114,8 +114,8 @@ class GoogleCloudStorage(Storage):
         Returns the total size, in bytes, of the file specified by name.
         """
         logger.info("in GoogleCloudStorage:size()")
-        size_retry_params = gcs.RetryParams(backoff_factor=1.1)
-        file_stat = gcs.stat(name,retry_params=size_retry_params)
+        size_retry_params = cloudstorage.RetryParams(backoff_factor=1.1)
+        file_stat = cloudstorage.stat(name,retry_params=size_retry_params)
         return file_stat.st_size
 
     def url(self, name):
