@@ -4,13 +4,15 @@ Created on Jun 24, 2014
 @author: lmalave
 '''
 from django.db import models
-from storage import GoogleCloudStorage
+
+#from storage import CloudStorage
+from gaekit.storages import CloudStorage
 from cms.models import CMSPlugin
 from google.appengine.ext import blobstore
 from google.appengine.api import images
 from cms.models import fields
 
-file_storage = GoogleCloudStorage()
+file_storage = CloudStorage()
 image_path = '/djangocmsquickstart'
 
 # Core models
@@ -53,3 +55,7 @@ class TwoColumnContainerPluginModel(CMSPlugin):
     heading = models.CharField(max_length=200,null=True,default=None)
     def __unicode__(self): 
         return 'heading:'+self.heading
+
+class QuoteOfDayPluginModel(CMSPlugin):
+    quote = models.TextField(max_length=1000,null=True,default=None)
+    author = models.CharField(max_length=200,null=True,default=None)

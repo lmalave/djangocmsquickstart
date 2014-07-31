@@ -22,7 +22,7 @@ import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-class GoogleCloudStorage(Storage):
+class CloudStorage(Storage):
     """
     Custom storage for Google Cloud Storage
     """

@@ -218,3 +218,4 @@ CACHES = {
         'TIMEOUT': 60,
     }
 }
+GS_BUCKET_NAME = 'djangocmsquickstart'

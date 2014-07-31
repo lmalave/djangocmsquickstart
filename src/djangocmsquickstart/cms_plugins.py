@@ -50,8 +50,17 @@ class TwoColumnContainerPlugin(CMSPluginBase):
         context.update({'instance':instance})
         return context
 
+class QuoteOfDayPlugin(CMSPluginBase):
+    model = models.QuoteOfDayPluginModel # model where data for plugin is saved
+    name = _("Quote of Day") # name of the plugin
+    render_template = "components/quote_of_day_plugin.html" # template that renders plugin
+    def render(self, context, instance, placeholder): 
+        context.update({'instance':instance})
+        return context
+
 plugin_pool.register_plugin(FlashPlugin) # register the plugin
 plugin_pool.register_plugin(ProductFeaturePlugin) # register the plugin
 plugin_pool.register_plugin(ProductGridPlugin) # register the plugin
 plugin_pool.register_plugin(PromoPlugin) # register the plugin
 plugin_pool.register_plugin(TwoColumnContainerPlugin) # register the plugin
+plugin_pool.register_plugin(QuoteOfDayPlugin) # register the plugin
